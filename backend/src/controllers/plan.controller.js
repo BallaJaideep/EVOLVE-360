@@ -435,7 +435,8 @@ export const generateWeeklyPlanController = async (req, res) => {
     const baseline = await BaselineProfile.findOne({ userId });
 
     if (!baseline) {
-      return res.status(404).json({
+      return res.status(200).json({
+        success: false,
         message: "Baseline profile not found"
       });
     }
@@ -674,9 +675,7 @@ export const getActiveWeeklyPlanController = async (req, res) => {
     });
 
     if (!plan) {
-      return res.status(404).json({
-        message: "No active workout plan found"
-      });
+      return res.status(200).json(null);
     }
 
     /* ===============================

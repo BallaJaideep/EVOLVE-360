@@ -142,14 +142,15 @@ const app = express();
    🔥 CORS CONFIGURATION (MUST BE BEFORE ROUTES)
 ===================================================== */
 
-app.use(cors({
-  origin: "http://localhost:5173",
+const corsOptions = {
+  origin: ["http://localhost:5173", "http://localhost:5174"],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true
-}));
+  credentials: true,
+};
 
-app.options("*", cors());
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions)); // preflight must use the same options
 
 /* =====================================================
    BODY PARSER

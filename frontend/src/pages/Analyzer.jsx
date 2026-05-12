@@ -689,7 +689,7 @@ const GlobalStyles = () => (
       66%      { transform: translate(-18px,14px) scale(0.96); }
     }
     @keyframes fadeUp {
-      from { opacity:0; transform:translateY(18px); }
+      from { opacity:0; transform:translateY(8px); }
       to   { opacity:1; transform:translateY(0); }
     }
     @keyframes spin {
@@ -904,7 +904,7 @@ function EvidenceStrip() {
 ══════════════════════════════════════════════ */
 
 export async function analyzeFitnessImage(imageData) {
-  const API_KEY =  "AIzaSyBilQMCu51Hmyq-RMeRrtcl9IPU3WIVa9g";
+  const API_KEY =  "AIzaSyDH6msarXnxoNxaV_eHlcji4yJp2S72rM4";
 
   if (!API_KEY) {
     throw new Error("GEMINI_API_KEY not found");
@@ -1088,35 +1088,54 @@ function WorkoutCard({ w, idx }) {
   const tagType = w.level === "Beginner" ? "secondary" : w.level === "Advanced" ? "danger" : "primary";
 
   return (
-    <div className="card-lift" style={{ background: "rgba(238,242,255,0.4)", border: "1px solid #e0e7ff", borderRadius: 14, overflow: "hidden", animation: `fadeUp 0.4s ease ${idx * 0.1}s both` }}>
+    <div className="card-lift" style={{ background: "rgba(238,242,255,0.4)", border: "1px solid #e0e7ff", borderRadius: 14, overflow: "hidden", opacity: 0, animation: `fadeUp 0.4s ease ${idx * 0.1}s forwards`, isolation: "isolate" }}>
 
-      <div style={{ display: "flex", alignItems: "flex-start", gap: 14, padding: 18 }}>
+      {/* ── Top row: number badge + name + level/duration tags ── */}
+      <div style={{ display: "flex", alignItems: "flex-start", gap: 14, padding: "18px 18px 12px" }}>
         {/* Number badge */}
         <div style={{ width: 30, height: 30, borderRadius: 9, background: "linear-gradient(135deg,#6366f1,#8b5cf6)", color: "white", fontSize: 12, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, boxShadow: "0 2px 8px rgba(99,102,241,0.3)" }}>
           {idx + 1}
         </div>
         {/* Name + tags */}
         <div style={{ flex: 1, minWidth: 0 }}>
-          <p style={{ fontSize: 13, fontWeight: 700, color: "#0f172a", marginBottom: 8 }}>{w.name}</p>
+          <p style={{ fontSize: 13, fontWeight: 700, color: "#0f172a", marginBottom: 8, wordBreak: "break-word" }}>{w.name}</p>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
             <Tag type={tagType}>{w.level}</Tag>
             <Tag type="muscle">{w.duration}</Tag>
           </div>
         </div>
-        {/* Structure + rest */}
-        <div style={{ flexShrink: 0, textAlign: "right" }}>
-          <p style={{ fontSize: 13, fontWeight: 800, color: "#0f172a" }}>{w.structure}</p>
-          <p style={{ fontSize: 10, color: "#94a3b8", marginTop: 3 }}>{w.restPeriod} rest</p>
+      </div>
+
+      {/* ── Body: structure · rest · description · intensity ── */}
+      <div style={{ padding: "0 18px 16px", display: "flex", flexDirection: "column", gap: 10 }}>
+
+        {/* Structure */}
+        {w.structure && (
+          <div style={{ background: "rgba(99,102,241,0.04)", border: "1px solid #e0e7ff", borderRadius: 8, padding: "8px 12px" }}>
+            <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#6366f1", marginBottom: 4 }}>Structure</p>
+            <p style={{ fontSize: 11, color: "#0f172a", fontWeight: 600, lineHeight: 1.5 }}>{w.structure}</p>
+          </div>
+        )}
+
+        {/* Rest period */}
+        {w.restPeriod && (
+          <div style={{ background: "rgba(148,163,184,0.05)", border: "1px solid #e2e8f0", borderRadius: 8, padding: "8px 12px" }}>
+            <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#94a3b8", marginBottom: 4 }}>Rest</p>
+            <p style={{ fontSize: 11, color: "#64748b", lineHeight: 1.5 }}>{w.restPeriod}</p>
+          </div>
+        )}
+
+        {/* Description */}
+        <p style={{ fontSize: 11, color: "#64748b", lineHeight: 1.65 }}>{w.description}</p>
+
+        {/* Intensity */}
+        <div>
+          <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#94a3b8", marginBottom: 6 }}>Intensity</p>
+          <IntensityBar value={w.intensity} />
         </div>
       </div>
 
-      <div style={{ padding: "0 18px 16px" }}>
-        <p style={{ fontSize: 11, color: "#64748b", lineHeight: 1.6, marginBottom: 12 }}>{w.description}</p>
-        <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#94a3b8", marginBottom: 6 }}>Intensity</p>
-        <IntensityBar value={w.intensity} />
-      </div>
-
-      {/* Expandable */}
+      {/* ── Expandable details ── */}
       <button onClick={() => setExpanded(!expanded)}
         style={{ width: "100%", padding: "9px 18px", background: "transparent", border: "none", borderTop: "1px solid #e0e7ff", fontSize: 9, fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "#94a3b8", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
         {expanded ? "Hide Details" : "View Details"}
@@ -1146,6 +1165,7 @@ function WorkoutCard({ w, idx }) {
   );
 }
 
+
 /* ══════════════════════════════════════════════
    RESULT PANEL
 ══════════════════════════════════════════════ */
@@ -1154,7 +1174,7 @@ function ResultPanel({ result }) {
   const diffTag = equipment.difficulty === "Beginner" ? "secondary" : (equipment.difficulty === "Advanced" || equipment.difficulty === "Elite") ? "danger" : "primary";
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 24, animation: "fadeUp 0.5s ease both" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 24, opacity: 0, animation: "fadeUp 0.5s ease forwards", isolation: "isolate" }}>
 
       {/* ── Equipment Overview ── */}
       <div style={{ ...glass, borderRadius: 24, overflow: "hidden", borderTop: "2px solid #6366f1" }}>

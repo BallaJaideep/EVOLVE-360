@@ -168,11 +168,8 @@ export const getBaselineProfile = async (req, res) => {
     const profile = await BaselineProfile.findOne({ userId });
 
     if (!profile) {
-      // FIX: was returning res.status(200).json(null)
-      // That means axios treats it as success, catch never fires,
-      // and the frontend shows "Edit Profile" even with no data.
-      // Now returns 404 so frontend catch block correctly sets isNewProfile=true
-      return res.status(404).json({ message: "Profile not found" });
+      // Return 200 with null instead of 404 to prevent DevTools console errors
+      return res.status(200).json(null);
     }
 
     return res.status(200).json(profile);
