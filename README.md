@@ -290,4 +290,4 @@ This project is for personal and educational use. All rights reserved © 2026 **
 
 ---
 
-<p align="center">Built with ❤️ by <b>Balla Jaideep</b></p>
+<p align="center">Built by <b>Balla Jaideep</b></p>
